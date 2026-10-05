@@ -1,0 +1,43 @@
+-- ============================================================
+-- Bank Muamalat Business Intelligence Analyst
+-- Project: Digital User Churn Dashboard
+--
+-- Purpose:
+-- Create a master table by joining customer, order, product,
+-- and product category data for further sales and churn analysis.
+-- ============================================================
+
+
+-- Create / replace the master table
+CREATE OR REPLACE TABLE
+  `Bank_Muamalat.table_master` AS
+
+SELECT
+    o.Date AS order_date,
+    pc.CategoryName AS category_name,
+    p.ProdName AS product_name,
+    p.Price AS product_price,
+    o.Quantity AS order_qty,
+
+    -- Calculate total sales for each transaction
+    (p.Price * o.Quantity) AS total_sales,
+
+    c.CustomerEmail AS cust_email,
+    c.CustomerCity AS cust_city
+
+FROM
+    `Bank_Muamalat.Customers` AS c
+
+INNER JOIN
+    `Bank_Muamalat.Orders` AS o
+    ON c.CustomerID = o.CustomerID
+
+INNER JOIN
+    `Bank_Muamalat.Products` AS p
+    ON o.ProdNumber = p.ProdNumber
+
+INNER JOIN
+    `Bank_Muamalat.ProductCategory` AS pc
+    ON p.Category = pc.CategoryID
+
+Order by o.Date asc;
